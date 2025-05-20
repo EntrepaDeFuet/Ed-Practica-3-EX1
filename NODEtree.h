@@ -17,16 +17,16 @@ NODEtree(const NODEtree<Key,Value>& orig);
 virtual ~NODEtree();
 
 /* Modificadors */
-void setRight(const NODEtree<Key,Value>* node);
-void setLeft(const NODEtree<Key,Value>* node);
+void setRight( NODEtree<Key,Value>* node);
+void setLeft( NODEtree<Key,Value>* node);
 void setKey( Key _key);
 
 
 /* Consultors */
 const Key& getKey() const;
 const vector<Value>& getValue() const;
-const NODEtree <Key,Value>* getLeft() const;
-const NODEtree <Key, Value>* getRight() const;
+ NODEtree <Key,Value>* getLeft() const;
+ NODEtree <Key, Value>* getRight() const;
 
 
 
@@ -40,9 +40,9 @@ int height() const;
 bool operator==(const NODEtree<Key,Value>& node) const;
 
 // Mètodes pròpis per a encapsular codi:
-const NODEtree <Key,Value>* getFather() const;
+NODEtree <Key,Value>* getFather() const;
 bool mateixaLlista(vector<Value> llista) const;
-void setFather(const NODEtree<Key,Value>* node);
+void setFather( NODEtree<Key,Value>* node);
 
 private:
 
@@ -59,6 +59,9 @@ NODEtree<Key, Value>* father;
 template <class Key, class Value>
 NODEtree<Key,Value>::NODEtree(const Key& key){
     this->key = key;
+    this->father = nullptr;
+    this->left = nullptr;
+    this->right = nullptr;
 }
 
 template <class Key, class Value>
@@ -69,7 +72,7 @@ NODEtree<Key,Value>::NODEtree(const NODEtree<Key,Value>& orig){
 }
 
 template <class Key, class Value>
-void NODEtree<Key,Value>::setRight(const NODEtree<Key,Value>* node){
+void NODEtree<Key,Value>::setRight(NODEtree<Key,Value>* node){
     this->right = node;
 }
 
@@ -80,7 +83,7 @@ NODEtree<Key,Value>::~NODEtree(){}
 //Modificadors:
 
 template <class Key, class Value>
-void NODEtree<Key,Value>::setLeft(const NODEtree<Key,Value>* node){
+void NODEtree<Key,Value>::setLeft(NODEtree<Key,Value>* node){
     this->left = node;
 }
 template <class Key, class Value>
@@ -90,7 +93,7 @@ void NODEtree<Key,Value>::setKey(Key _key){
 //Consultors:
 template <class Key, class Value>
 const Key& NODEtree<Key,Value>::getKey() const{
-    return this->Key;
+    return this->key;
 }
 template <class Key, class Value>
 const vector<Value>& NODEtree<Key,Value>::getValue() const{
@@ -98,15 +101,15 @@ const vector<Value>& NODEtree<Key,Value>::getValue() const{
 }
 
 template <class Key, class Value>
-const NODEtree<Key,Value>* NODEtree<Key,Value>::getRight() const{
+ NODEtree<Key,Value>* NODEtree<Key,Value>::getRight() const{
     return this->right;
 }
 template <class Key, class Value>
-const NODEtree<Key,Value>* NODEtree<Key, Value>::getLeft() const{
+ NODEtree<Key,Value>* NODEtree<Key, Value>::getLeft() const{
     return this->left;
 }
 template <class Key,class Value>
-const NODEtree <Key,Value>*  NODEtree<Key, Value>::getFather() const{
+NODEtree <Key,Value>*  NODEtree<Key, Value>::getFather() const{
     return this->father;
 }
 
@@ -139,7 +142,7 @@ bool NODEtree <Key, Value>::isExternal() const{
 template <class Key, class Value>
 void NODEtree <Key, Value>::insertValue(const Value& value){
     Value value1 = value;
-    this->getValue().push_back(value1);
+    this->values.push_back(value1);
 }
 
 template <class Key, class Value>
@@ -172,7 +175,7 @@ bool NODEtree<Key,Value>::mateixaLlista(vector<Value> llista) const{
     int n;
     int i = 0;
     if(llista.size()==this->values.size()){
-        n = llista.size;
+        n = llista.size();
     } else {
         b = false;
     }
@@ -183,7 +186,7 @@ bool NODEtree<Key,Value>::mateixaLlista(vector<Value> llista) const{
     return b;
 }
 template <class Key, class Value>
-void NODEtree<Key,Value>::setFather(const NODEtree<Key,Value>* node){
+void NODEtree<Key,Value>::setFather( NODEtree<Key,Value>* node){
     this->father = node;
 }
 
