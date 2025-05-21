@@ -43,10 +43,11 @@ NODEtree<Key,Value>* insertaNode(NODEtree<Key,Value>* orig,NODEtree<Key,Value>* 
 const vector<Value>& valuesOfRecursiu(const NODEtree<Key,Value> orig,const Key& k) const;
 void deleteNode(NODEtree<Key,Value>* node);
 void buscarElGros(const NODEtree<Key,Value>* node)const;
-void mirallNode(NODEtree<Key,Value> * orig, NODEtree<Key,Value>* mirall);
+NODEtree<Key,Value>* mirallNode(NODEtree<Key,Value> * orig);
 NODEtree<Key,Value>* getRoot() const;
 const string valuesAString(const NODEtree<Key,Value>* node) const;
 void buscaFulles(NODEtree<Key,Value>*node,list<NODEtree<Key,Value>*> &llista) const;
+
 };
 
 template <class Key, class Value>
@@ -77,27 +78,29 @@ NODEtree<Key,Value>* BSTtree<Key,Value>::getRoot() const{
 
 template <class Key, class Value>
 BSTtree<Key,Value>::BSTtree(const BSTtree<Key,Value>& orig){
-    
+    this->root = nullptr;
     this->root = copia(orig.getRoot());
     this->_size = orig.size();
 }
 
 template<class Key,class Value>
 void BSTtree<Key,Value>::deleteNode(NODEtree<Key,Value>* node){
-    if(node->getLeft()!=nullptr){
-        deleteNode(node->getLeft());
+    if(node != nullptr){
+        if(node->getLeft()!=nullptr){
+            deleteNode(node->getLeft());
+        }
+        if(node->getRight()!=nullptr){
+            deleteNode(node->getRight());
+        }
+        delete node;
+        this->_size = this->_size-1;
     }
-    if(node->getRight()!=nullptr){
-        deleteNode(node->getRight());
-    }
-    delete node;
-    this->_size = this->_size-1;
 }
 
 
 template <class Key, class Value>
 BSTtree<Key,Value>::~BSTtree(){
-    
+    deleteNode(this->root);
 }
 template <class Key, class Value>
 
@@ -116,29 +119,41 @@ template <class Key, class Value>
 NODEtree<Key,Value>* BSTtree<Key,Value>::insert(const Key& k, const Value& value){
     
     NODEtree<Key,Value>* node = new NODEtree<Key,Value>(k);
-    
     node->insertValue(value);
-    
-    return insertaNode(this->root,node);
+    bool prova = this->root == nullptr;
+    if(prova){
+        this->root = node;
+        return node;
+    }else{
+        return insertaNode(this->root,node);
+    }
 }
+
 template <class Key, class Value>
 NODEtree<Key,Value>* BSTtree<Key,Value>::insertaNode(NODEtree<Key,Value>* orig ,NODEtree<Key,Value>* node){
-    
-    if(orig == nullptr){
-        orig = node;
-        this->_size = this->_size +1;
-        return node;
-    }
-    else if(orig->getKey() == node->getKey()){
-        
+
+    if(orig->getKey()==node->getKey()){
         orig->insertValue(node->getValue()[0]);
         return orig;
-    } else if(orig->getKey()<node->getKey()){
-        return insertaNode(orig->getRight(),node);
-
     }else if(orig->getKey()>node->getKey()){
-        return insertaNode(orig->getLeft(),node);
+        node->setFather(orig);
+        if(orig->getLeft()==nullptr){
+            orig->setLeft(node);
+            return node;
+        }else{
+            
+            return insertaNode(orig->getLeft(),node);
+        }
+    } else if (orig->getKey()<node->getKey()){
+        node->setFather(orig);
+        if(orig->getRight()==nullptr){
+            orig->setRight(node);
+            return node;
+        } else {
+            return insertaNode(orig->getRight(),node);
+        }
     }
+    return nullptr;
 }
 
 template<class Key, class Value>
@@ -163,24 +178,18 @@ const vector<Value>& BSTtree<Key,Value>::valuesOfRecursiu(const NODEtree<Key,Val
         }
     }
 }
-template<class Key, class Value>
-const string BSTtree<Key,Value>::valuesAString(const NODEtree<Key,Value>* node)const{
-    vector<Value> llista = node->getValue();
-    string cadena = "";
-    for (int i = 0; i<llista.size();i++){
-        cadena += llista[i];
-    }
-    return cadena;
-}
+
 
 template<class Key, class Value>
 void BSTtree<Key,Value>::printPreorder(const NODEtree<Key,Value>* n) const{
-    if(n == nullptr && this->root == nullptr){
-        return;
-    } else if(n==nullptr){
+    
+    if(n==nullptr){
+        if(this->root == nullptr){
+            return;
+        }
         printPreorder(this->root);
     } else {
-        cout << valuesAString(n);
+        cout << " " <<n->getKey()<< " ";
         if(n->getLeft()!=nullptr){
             printPreorder(n->getLeft());
         }
@@ -191,15 +200,16 @@ void BSTtree<Key,Value>::printPreorder(const NODEtree<Key,Value>* n) const{
 }
 template<class Key, class Value>
 void BSTtree<Key,Value>::printInorder(const NODEtree<Key,Value>* n) const{
-    if(n == nullptr && this->root == nullptr){
-        return;
-    } else if(n==nullptr){
+    if(n==nullptr){
+        if(this->root == nullptr){
+            return;
+        }
         printInorder(this->root);
     } else {
         if(n->getLeft()!=nullptr){
             printInorder(n->getLeft());
         }
-        cout << valuesAString(n);
+        cout << " " <<n->getKey()<< " ";
         if(n->getRight()!=nullptr){
             printInorder(n->getRight());
         }
@@ -207,9 +217,11 @@ void BSTtree<Key,Value>::printInorder(const NODEtree<Key,Value>* n) const{
 }
 template<class Key, class Value>
 void BSTtree<Key,Value>::printPostorder(const NODEtree<Key,Value>* n) const{
-    if(n == nullptr && this->root == nullptr){
-        return;
-    } else if(n==nullptr){
+    
+    if(n==nullptr){
+        if(this->root == nullptr){
+            return;
+        }
         printPostorder(this->root);
     } else {
         if(n->getLeft()!=nullptr){
@@ -219,11 +231,12 @@ void BSTtree<Key,Value>::printPostorder(const NODEtree<Key,Value>* n) const{
         if(n->getRight()!=nullptr){
             printPostorder(n->getRight());
         }
-        cout << valuesAString(n);
+        cout << " " <<n->getKey()<< " ";
     }
 }
 template<class Key,class Value>
 void BSTtree<Key,Value>::buscarElGros(const NODEtree<Key,Value>* node)const{
+
     if(node->getRight()==nullptr){
         cout << node->getFather()->getKey() << endl;
     } else {
@@ -236,28 +249,27 @@ void BSTtree<Key,Value>::printSecondLargestKey() const{
 }
 
 template <class Key,class Value>
-void BSTtree<Key,Value>::mirallNode(NODEtree<Key,Value> * orig, NODEtree<Key,Value>* mirall){
-    if (orig == nullptr){
-        return;
-    } else {
-        NODEtree<Key,Value>* node = new NODEtree<Key,Value>(*orig);
-        mirall = node;
-        mirallNode(orig->getLeft(),mirall->getRight());
-        mirallNode(orig->getRight(),mirall->getLeft());
+NODEtree<Key,Value>* BSTtree<Key,Value>::mirallNode(NODEtree<Key,Value> * orig){
 
+    if (orig == nullptr){
+        return nullptr;
+    } else {
+        NODEtree<Key,Value>* node = new NODEtree(*orig);
+        node->setRight(mirallNode(orig->getLeft()));
+        node->setLeft(mirallNode(orig->getRight()));
+        return node;
     }
 
 }
 
 template <class Key,class Value>
 void BSTtree<Key,Value>::mirrorTree(){
-    BSTtree<Key,Value>* mirall = new BSTtree();
 
-    mirallNode(this->root,mirall->root);
+    BSTtree<Key,Value>* mirall = new BSTtree();
+    mirall->root = mirallNode(this->root);
     BSTtree<Key,Value>* copia = this;
     NODEtree<Key,Value>* copiaRoot = mirall->getRoot();
     this->root = copiaRoot;
-    delete copia;
 }
 template<class Key, class Value>
 void BSTtree<Key,Value>::buscaFulles(NODEtree<Key,Value>*node,list<NODEtree<Key,Value>*> &llista) const{

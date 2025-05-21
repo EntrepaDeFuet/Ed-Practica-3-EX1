@@ -69,6 +69,8 @@ NODEtree<Key,Value>::NODEtree(const NODEtree<Key,Value>& orig){
     this->key = orig.getKey();
     this->values = orig.getValue();
     this->father = orig.getFather();
+    this->left = nullptr;
+    this->right = nullptr;
 }
 
 template <class Key, class Value>
@@ -78,7 +80,9 @@ void NODEtree<Key,Value>::setRight(NODEtree<Key,Value>* node){
 
 //Destructor:
 template <class Key, class Value>
-NODEtree<Key,Value>::~NODEtree(){}
+NODEtree<Key,Value>::~NODEtree(){
+    
+}
 
 //Modificadors:
 

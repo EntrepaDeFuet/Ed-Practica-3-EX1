@@ -9,9 +9,7 @@ int main(){
 
     for (int i = 0; i < 8 ; i++) {
         cout << "Inserta a l'arbre la key " << testKeys[i] << " amb valor " << testValues[i] << endl;
-        tree1.insert(testKeys[i], testValues[i]);
-        cout << tree1.valuesOf(testKeys[i])[0] << endl;
-        
+        tree1.insert(testKeys[i], testValues[i]); 
     }
     cout << "Preorder = [";
     tree1.printPreorder();
